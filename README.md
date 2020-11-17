@@ -4,6 +4,10 @@ Removed some junk at the end of the csv file because it couldn't be read - assum
 
 This is an intellij project which you can import from github at https://github.com/harpermj66/takehome.git.
 
+The project will run on port 8080. 
+
+The API url is http://localhost:8080/api/munro and takes query parameters - category, sort, size, minHeight, maxHeight if required.s
+
 The package naming may cause confusion because the main package ends with 'test' - not to be confused with src/test.
 
 The MunroService class loads the data from the testdata folder and provides the find method for filtering sorting etc.

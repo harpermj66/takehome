@@ -4,7 +4,7 @@ Removed some junk at the end of the csv file because it couldn't be read - assum
 
 This is an intellij project which you can import from github at https://github.com/harpermj66/takehome.git.
 
-The package naming may be confusion because the main package is 'test' - not to confused with src/main/test.
+The package naming may cause confusion because the main package is 'test' - not to confused with src/main/test.
 
 The MunroService class loads the data from the testdata folder and provides the find method for filtering sorting etc.
 

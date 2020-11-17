@@ -39,7 +39,6 @@ public class MunroService {
             loadModel(lines);
         } else {
             logger.error("FATAL!!!!! - File not found : " + System.getProperty("user.dir") + "/" + dataFile);
-            throw new FileNotFoundException("FATAL!!!!! - File not found : " + System.getProperty("user.dir") + "/" + dataFile);
         }
     }
 

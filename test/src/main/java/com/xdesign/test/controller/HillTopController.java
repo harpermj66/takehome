@@ -49,7 +49,11 @@ public class HillTopController {
         } else if (sort != null && !sortContainsIllegalFields(sort)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Illegal sort fields, field must be height or name");
         }
-        return munroService.getHillTops().stream().map(HillTop::toDTO).collect(Collectors.toList());
+        // Convert to dto
+        return munroService.find(category, sort, size, minHeight, maxHeight)
+                .stream()
+                .map(HillTop::toDTO)
+                .collect(Collectors.toList());
     }
 
 

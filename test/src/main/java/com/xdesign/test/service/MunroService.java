@@ -18,6 +18,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Service
@@ -31,8 +32,76 @@ public class MunroService {
     private List<HillTop> hillTops = new ArrayList<>();
     private Boolean hillTopsExist = false;
 
-    public List<HillTop> find(String category, String sort, Integer size, Double maxHeight, Double minHeight) {
-        return Arrays.asList(new HillTop());
+    public List<HillTop> find(String category, String sort, Integer size, Double minHeight, Double maxHeight) {
+
+        List<HillTop> filteredAndSorted =
+                hillTops
+                .stream()
+                .parallel()
+                .filter( c -> filterByCategory(category, c.getYPost1997()))
+                .filter( c -> filterByHeights(minHeight, maxHeight, c.getHeightMetre()))
+                .sorted( (o1, o2) -> sortValues(sort, o1, o2))
+                .collect(Collectors.toList());
+        if (size != null) {
+            return filteredAndSorted.stream().limit(size).collect(Collectors.toList());
+        } else {
+            return filteredAndSorted;
+        }
+    }
+
+    private Boolean filterByHeights(Double minHeight, Double maxHeight, Double currentValue) {
+        if (minHeight == null && maxHeight == null) {
+            return true;
+        } else if (maxHeight == null && minHeight != null) {
+            return currentValue >= minHeight;
+        } else if (maxHeight != null && minHeight == null) {
+            return currentValue <= maxHeight;
+        } else {
+            return currentValue >= minHeight && currentValue <= maxHeight;
+        }
+    }
+
+    private Integer sortValues(String sort, HillTop o1, HillTop o2) {
+        if (sort == null || sort.length() == 0) {
+            return o1.getName().compareTo(o2.getName());
+        }
+
+        // Take the first sort and if it is not name then sort by that first
+        // Not implementing combined sorts as yet
+        String[] tokens = sort.toLowerCase().split(",");
+        for (String token : tokens) {
+            String[] sortAndDirection = token.trim().split(" ");
+            String fieldName = sortAndDirection[0].trim().toLowerCase();
+            String direction = sortAndDirection[1].trim().toLowerCase();
+            if (fieldName.equals("height")) {
+                if (direction.equals("asc")) {
+                    return o1.getHeightMetre().compareTo(o2.getHeightMetre());
+                } else {
+                    return o2.getHeightMetre().compareTo(o1.getHeightMetre());
+                }
+            } else {
+                if (direction.equals("asc")) {
+                    return o1.getName().compareTo(o2.getName());
+                } else {
+                    return o2.getName().compareTo(o1.getName());
+                }
+
+            }
+        }
+
+        return 1;
+    }
+
+    private Boolean filterByCategory(String category, String value) {
+        if (value == null || value.trim().length() == 0) {
+            return false;
+        }
+        if (category == null || category.length() == 0) {
+            return true;
+        } else if (value.trim().equalsIgnoreCase(category.trim())) {
+            return true;
+        }
+        return false;
     }
 
     @PostConstruct

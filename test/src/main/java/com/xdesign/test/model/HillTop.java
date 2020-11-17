@@ -37,6 +37,17 @@ public class HillTop {
     private String yPost1997;
     private String comments;
 
+    public HillTop() {
+
+    }
+
+    public HillTop(String name, String category, Double height, String gridReference) {
+        this.name = name;
+        this.yPost1997 = category;
+        this.heightMetre = height;
+        this.gridRef = gridReference;
+    }
+
     public HillTopDTO toDTO() {
         HillTopDTO dto = new HillTopDTO();
         dto.setName(name);

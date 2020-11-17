@@ -3,6 +3,7 @@ package com.xdesign.test.service;
 import com.opencsv.CSVReader;
 import com.xdesign.test.model.HillTop;
 import lombok.Getter;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,16 +11,15 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Setter
 @Getter
 @Service
 public class MunroService {
@@ -37,7 +37,6 @@ public class MunroService {
         List<HillTop> filteredAndSorted =
                 hillTops
                 .stream()
-                .parallel()
                 .filter( c -> filterByCategory(category, c.getYPost1997()))
                 .filter( c -> filterByHeights(minHeight, maxHeight, c.getHeightMetre()))
                 .sorted( (o1, o2) -> sortValues(sort, o1, o2))
@@ -52,9 +51,9 @@ public class MunroService {
     private Boolean filterByHeights(Double minHeight, Double maxHeight, Double currentValue) {
         if (minHeight == null && maxHeight == null) {
             return true;
-        } else if (maxHeight == null && minHeight != null) {
+        } else if (maxHeight == null) {
             return currentValue >= minHeight;
-        } else if (maxHeight != null && minHeight == null) {
+        } else if (minHeight == null) {
             return currentValue <= maxHeight;
         } else {
             return currentValue >= minHeight && currentValue <= maxHeight;
@@ -89,7 +88,7 @@ public class MunroService {
             }
         }
 
-        return 1;
+        return 0;
     }
 
     private Boolean filterByCategory(String category, String value) {
@@ -98,14 +97,11 @@ public class MunroService {
         }
         if (category == null || category.length() == 0) {
             return true;
-        } else if (value.trim().equalsIgnoreCase(category.trim())) {
-            return true;
-        }
-        return false;
+        } else return value.trim().equalsIgnoreCase(category.trim());
     }
 
     @PostConstruct
-    private void loadData() throws IOException {
+    public void loadData() throws IOException {
         logger.info("Looking for file " + System.getProperty("user.dir") + "/" + dataFile);
         if (fileExists(dataFile)) {
             hillTopsExist = true;

@@ -11,18 +11,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/munro")
 public class HillTopController {
-
-    private static final Set<String> allowedSortFields = new HashSet<>(Arrays.asList("height", "name"));
-    private static final Set<String> allowedDirections = new HashSet<>(Arrays.asList("asc", "desc"));
 
     private final MunroService munroService;
 
@@ -44,9 +38,9 @@ public class HillTopController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Hilltops data is empty");
         } else if (minHeight != null && maxHeight != null && minHeight > maxHeight) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Minimum height must be less than maximum height");
-        } else if (sort != null && !canParseSort(sort)) {
+        } else if (sort != null && !SortValidator.canParseSort(sort)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sort parameter must be in format field1 asc, field2 desc etc");
-        } else if (sort != null && !sortContainsIllegalFields(sort)) {
+        } else if (sort != null && !SortValidator.sortContainsIllegalFields(sort)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Illegal sort fields, field must be height or name");
         }
         // Convert to dto
@@ -56,37 +50,4 @@ public class HillTopController {
                 .collect(Collectors.toList());
     }
 
-
-    private Boolean sortContainsIllegalFields(String sort) {
-        String[] tokens = sort.toLowerCase().split(",");
-        for (String token : tokens) {
-            String[] sortAndDirection = token.trim().split(" ");
-            String fieldName = sortAndDirection[0].trim();
-            if (!allowedSortFields.contains(fieldName)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private Boolean canParseSort(String sort) {
-        String[] tokens = sort.toLowerCase().split(",");
-        if (tokens.length == 0) {
-            return false;
-        }
-
-        for (String token : tokens) {
-            String[] sortAndDirection = token.trim().split(" ");
-            if (sortAndDirection.length != 2) {
-                return false;
-            }
-
-            String direction = sortAndDirection[1].trim();
-            if (!allowedDirections.contains(direction)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
 }

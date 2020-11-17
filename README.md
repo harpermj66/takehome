@@ -18,3 +18,6 @@ HillTopDTO is the return object which just holds only the required fields to red
 
 Tests are in the standard place under src/test and include api and service layer tests.
 
+I prepared, but left out the optional extra goal because I was short of time.
+
+

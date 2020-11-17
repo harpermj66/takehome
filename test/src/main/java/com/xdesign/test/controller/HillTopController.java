@@ -4,8 +4,6 @@ import com.xdesign.test.model.HillTop;
 import com.xdesign.test.model.HillTopDTO;
 import com.xdesign.test.service.MunroService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +15,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/munro")
@@ -50,8 +49,9 @@ public class HillTopController {
         } else if (sort != null && !sortContainsIllegalFields(sort)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Illegal sort fields, field must be height or name");
         }
-        return null;
+        return munroService.getHillTops().stream().map(HillTop::toDTO).collect(Collectors.toList());
     }
+
 
     private Boolean sortContainsIllegalFields(String sort) {
         String[] tokens = sort.toLowerCase().split(",");

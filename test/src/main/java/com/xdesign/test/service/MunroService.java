@@ -16,6 +16,7 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Getter
@@ -29,6 +30,10 @@ public class MunroService {
 
     private List<HillTop> hillTops = new ArrayList<>();
     private Boolean hillTopsExist = false;
+
+    public List<HillTop> find(String category, String sort, Integer size, Double maxHeight, Double minHeight) {
+        return Arrays.asList(new HillTop());
+    }
 
     @PostConstruct
     private void loadData() throws IOException {

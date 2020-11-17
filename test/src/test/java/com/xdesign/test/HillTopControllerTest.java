@@ -1,9 +1,9 @@
 package com.xdesign.test;
 
-import com.xdesign.test.controller.HillTopController;
 import com.xdesign.test.model.HillTop;
 import com.xdesign.test.service.MunroService;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -21,9 +21,6 @@ import java.util.List;
 public class HillTopControllerTest {
 
     @Autowired
-    private HillTopController hillTopController;
-
-    @Autowired
     private MockMvc mockMvc;
 
     @Autowired
@@ -37,8 +34,14 @@ public class HillTopControllerTest {
         hillTopList.add(new HillTop("D", "TOP", 4.0, "DEFG"));
     }
 
+    @BeforeEach
+    void setData() {
+        this.munroService.setHillTops(hillTopList);
+    }
+
     @Test
     void testEmptyData() throws Exception {
+        this.munroService.setHillTops(new ArrayList<>());
         this.mockMvc
                 .perform(get("/api/munro"))
                 .andExpect(status().isNotFound());
@@ -46,7 +49,6 @@ public class HillTopControllerTest {
 
     @Test
     void testNonNullData() throws Exception {
-        this.munroService.setHillTops(hillTopList);
         this.mockMvc
                 .perform(get("/api/munro"))
                 .andExpect(status().isOk());
@@ -54,7 +56,6 @@ public class HillTopControllerTest {
 
     @Test
     void testMinMaxHeightFail() throws Exception {
-        this.munroService.setHillTops(hillTopList);
         this.mockMvc
                 .perform(get("/api/munro?minHeight=3&maxHeight=2"))
                 .andExpect(status().isBadRequest());
@@ -62,7 +63,6 @@ public class HillTopControllerTest {
 
     @Test
     void testMinMaxHeightOK() throws Exception {
-        this.munroService.setHillTops(hillTopList);
         this.mockMvc
                 .perform(get("/api/munro?minHeight=2&maxHeight=3"))
                 .andExpect(status().isOk());
@@ -70,7 +70,6 @@ public class HillTopControllerTest {
 
     @Test
     void testSortFail1() throws Exception {
-        this.munroService.setHillTops(hillTopList);
         this.mockMvc
                 .perform(get("/api/munro?sort=number"))
                 .andExpect(status().isBadRequest());
@@ -78,7 +77,6 @@ public class HillTopControllerTest {
 
     @Test
     void testSortFail2() throws Exception {
-        this.munroService.setHillTops(hillTopList);
         this.mockMvc
                 .perform(get("/api/munro?sort=height asc, name des"))
                 .andExpect(status().isBadRequest());
@@ -86,7 +84,6 @@ public class HillTopControllerTest {
 
     @Test
     void testSortFail3() throws Exception {
-        this.munroService.setHillTops(hillTopList);
         this.mockMvc
                 .perform(get("/api/munro?sort=height asceding"))
                 .andExpect(status().isBadRequest());
@@ -94,7 +91,6 @@ public class HillTopControllerTest {
 
     @Test
     void testSortPass1() throws Exception {
-        this.munroService.setHillTops(hillTopList);
         this.mockMvc
                 .perform(get("/api/munro?sort=height asc"))
                 .andExpect(status().isOk());
@@ -102,15 +98,13 @@ public class HillTopControllerTest {
 
     @Test
     void testSortPass2() throws Exception {
-        this.munroService.setHillTops(hillTopList);
         this.mockMvc
-                .perform(get("/api/munro?sort=height asc, name desc"))
+                .perform(get("/api/munro?sort=height asc, name des"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void testSortFieldNameFail1() throws Exception {
-        this.munroService.setHillTops(hillTopList);
         this.mockMvc
                 .perform(get("/api/munro?sort=number asc"))
                 .andExpect(status().isBadRequest());
@@ -118,9 +112,8 @@ public class HillTopControllerTest {
 
     @Test
     void testSortFieldNamePass1() throws Exception {
-        this.munroService.setHillTops(hillTopList);
         this.mockMvc
                 .perform(get("/api/munro?sort=name asc, height asc"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isOk());
     }
 }

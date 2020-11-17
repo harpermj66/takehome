@@ -108,6 +108,8 @@ public class MunroService {
             List<String[]> lines = loadLines(dataFile);
             loadModel(lines);
         } else {
+            // Deliberately allowing spring to start rather than throwing an exception here.
+            // The controller will report and error when data is searched for.
             logger.error("FATAL!!!!! - File not found : " + System.getProperty("user.dir") + "/" + dataFile);
         }
     }

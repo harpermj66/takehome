@@ -17,7 +17,7 @@ public class HillTop {
     private String rhbSection;
     private Double section;
     private Double heightMetre;
-    private Integer heightFeet;
+    private Double heightFeet;
     private String map150;
     private String map125;
     private String gridRef;
@@ -37,4 +37,12 @@ public class HillTop {
     private String yPost1997;
     private String comments;
 
+    public HillTopDTO toDTO() {
+        HillTopDTO dto = new HillTopDTO();
+        dto.setName(name);
+        dto.setCategory(yPost1997);
+        dto.setGridReference(gridRef);
+        dto.setHeight(heightMetre);
+        return dto;
+    }
 }
